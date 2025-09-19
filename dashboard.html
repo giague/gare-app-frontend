@@ -7,15 +7,34 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1 id="welcomeMessage">Caricamento...</h1>
+
+    <header class="header">
+        <div class="user-info">
+            <span id="welcomeMessage">Caricamento...</span>
+        </div>
+        <nav>
+            <button id="logoutButton">Logout</button>
+        </nav>
+    </header>
+
+    <div class="container main-content">
+        <h1>Dashboard</h1>
+        <p>Qui puoi visualizzare e gestire i dati delle tue gare.</p>
     </div>
 
     <script type="module">
         import { API_URL } from './config.js';
 
         const welcomeMessageElement = document.getElementById('welcomeMessage');
+        const logoutButton = document.getElementById('logoutButton');
+
         const PROFILE_API_URL = `${API_URL}/user/profile`;
+
+        // Funzione per il logout
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        });
 
         async function fetchUserProfile() {
             const token = localStorage.getItem('token');
@@ -35,7 +54,7 @@
 
                 if (response.ok) {
                     const userProfile = await response.json();
-                    welcomeMessageElement.textContent = `Benvenuto ${userProfile.nome} ${userProfile.cognome}`;
+                    welcomeMessageElement.textContent = `Benvenuto, ${userProfile.nome} ${userProfile.cognome}`;
                 } else if (response.status === 401) {
                     window.location.href = 'index.html';
                 } else {
