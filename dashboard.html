@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1 id="welcomeMessage">Caricamento...</h1>
+
+    <script>
+        const welcomeMessageElement = document.getElementById('welcomeMessage');
+
+        async function fetchUserProfile() {
+            const token = localStorage.getItem('token');
+            
+            // Controlla se il token esiste
+            if (!token) {
+                // Se non c'è il token, reindirizza alla pagina di login
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('https://localhost:7654/api/user/profile', {
+                    method: 'GET',
+                    headers: {
+                        // Invia il JWT come header di autorizzazione
+                        'Authorization': `Bearer ${token}` 
+                    }
+                });
+
+                if (response.ok) {
+                    const userProfile = await response.json();
+                    welcomeMessageElement.textContent = `Benvenuto ${userProfile.nome} ${userProfile.cognome}`;
+                } else if (response.status === 401) {
+                    // Token non valido o scaduto, reindirizza al login
+                    window.location.href = 'index.html';
+                } else {
+                    welcomeMessageElement.textContent = 'Impossibile caricare il profilo utente.';
+                }
+            } catch (error) {
+                welcomeMessageElement.textContent = 'Si è verificato un errore durante il caricamento.';
+                console.error('Errore durante il recupero del profilo utente:', error);
+            }
+        }
+
+        // Chiama la funzione al caricamento della pagina
+        fetchUserProfile();
+    </script>
+</body>
+</html>
