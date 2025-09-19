@@ -1,7 +1,11 @@
+// app.js
+
+import { API_URL } from './config.js';
+
 const loginForm = document.getElementById('loginForm');
 const message = document.getElementById('message');
 
-const API_URL = 'https://localhost:7654/api/auth/login';
+const LOGIN_API_URL = `${API_URL}/auth/login`;
 
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -9,10 +13,10 @@ loginForm.addEventListener('submit', async (e) => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    message.textContent = ''; // Pulisci il messaggio precedente
+    message.textContent = ''; 
 
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(LOGIN_API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -23,10 +27,8 @@ loginForm.addEventListener('submit', async (e) => {
         if (response.ok) {
             const result = await response.json();
             const token = result.token;
-            // Salva il token in locale per le future richieste
             localStorage.setItem('token', token);
             
-            // Reindirizza l'utente alla dashboard
             window.location.href = `dashboard.html`;
         } else {
             const result = await response.json();
