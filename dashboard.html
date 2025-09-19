@@ -4,47 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 id="welcomeMessage">Caricamento...</h1>
+    <div class="container">
+        <h1 id="welcomeMessage">Caricamento...</h1>
+    </div>
 
     <script type="module">
-    import { API_URL } from './config.js';
+        import { API_URL } from './config.js';
 
-    const welcomeMessageElement = document.getElementById('welcomeMessage');
-    const PROFILE_API_URL = `${API_URL}/user/profile`;
+        const welcomeMessageElement = document.getElementById('welcomeMessage');
+        const PROFILE_API_URL = `${API_URL}/user/profile`;
 
-    async function fetchUserProfile() {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-            window.location.href = 'index.html';
-            return;
-        }
-
-        try {
-            const response = await fetch(PROFILE_API_URL, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}` 
-                }
-            });
-
-            if (response.ok) {
-                const userProfile = await response.json();
-                welcomeMessageElement.textContent = `Benvenuto ${userProfile.nome} ${userProfile.cognome}`;
-            } else if (response.status === 401) {
+        async function fetchUserProfile() {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
                 window.location.href = 'index.html';
-            } else {
-                welcomeMessageElement.textContent = 'Impossibile caricare il profilo utente.';
+                return;
             }
-        } catch (error) {
-            welcomeMessageElement.textContent = 'Si è verificato un errore durante il caricamento.';
+
+            try {
+                const response = await fetch(PROFILE_API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}` 
+                    }
+                });
+
+                if (response.ok) {
+                    const userProfile = await response.json();
+                    welcomeMessageElement.textContent = `Benvenuto ${userProfile.nome} ${userProfile.cognome}`;
+                } else if (response.status === 401) {
+                    window.location.href = 'index.html';
+                } else {
+                    welcomeMessageElement.textContent = 'Impossibile caricare il profilo utente.';
+                }
+            } catch (error) {
+                welcomeMessageElement.textContent = 'Si è verificato un errore durante il caricamento.';
                 console.error('Errore durante il recupero del profilo utente:', error);
             }
         }
 
-    fetchUserProfile();
-</script>
+        fetchUserProfile();
+    </script>
+    <script src="config.js" type="module"></script>
 </body>
 </html>
